@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ভগবদ গীতা | Bhagavad Gita</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/9/98/Gita-icon.png" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&display=swap');
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      background: linear-gradient(135deg, #fdf6e3, #ffe6e6);
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #8B0000;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 1px 1px #fff;
+    }
+    .shlok-card {
+      background: #fffdfa;
+      padding: 1.5rem;
+      margin: 1rem auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      transition: transform 0.2s;
+    }
+    .shlok-card:hover {
+      transform: scale(1.01);
+    }
+    .sanskrit {
+      font-weight: bold;
+      color: #4b0082;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      white-space: pre-wrap;
+    }
+    .translation {
+      font-size: 1rem;
+      margin: 0.3rem 0;
+    }
+    input[type="text"] {
+      padding: 0.8rem;
+      width: 90%;
+      max-width: 500px;
+      margin: 1rem auto;
+      display: block;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .language-toggle {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    button {
+      margin: 0.3rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .bn { background: #fce4ec; color: #880e4f; }
+    .en { background: #e3f2fd; color: #0d47a1; }
+    .hi { background: #e8f5e9; color: #1b5e20; }
+    .bn:hover { background: #f8bbd0; }
+    .en:hover { background: #90caf9; }
+    .hi:hover { background: #a5d6a7; }
+  </style>
+</head>
+<body>
+  <h1>📖 ভগবদ গীতা (Bhagavad Gita)</h1>
+  <div class="language-toggle">
+    <button onclick="setLang('bn')" class="bn">Bengali</button>
+    <button onclick="setLang('en')" class="en">English</button>
+    <button onclick="setLang('hi')" class="hi">Hindi</button>
+    <button onclick="downloadPDF()">📄 PDF Export</button>
+  </div>
+  <input type="text" id="searchInput" placeholder="Search shlok or translation..." oninput="renderShlokas()" />
+  <div id="shlokContainer"></div>
+  <audio id="bgAudio" loop autoplay hidden>
+    <source src="https://www.sanskritimagazine.com/wp-content/uploads/2020/10/Bhagavad-Gita.mp3" type="audio/mpeg" />
+  </audio>
+  <script>
+    let currentLang = 'bn';
+    const shlokas = [
+      {
+        id: 1,
+        sanskrit: `धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः ।\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ॥1॥`,
+        translation: {
+          bn: "ধর্মক্ষেত্র কুরুক্ষেত্রে যুদ্ধেচ্ছু সমবেত — আমার ও পাণ্ডবদের সন্তানেরা কী করল, হে সঞ্জয়?",
+          en: "In the field of dharma, Kurukshetra, assembled with a desire to fight, what did my sons and the sons of Pandu do, O Sanjaya?",
+          hi: "धर्मभूमि कुरुक्षेत्र में युद्ध की इच्छा से एकत्र मेरे और पाण्डु के पुत्रों ने क्या किया, हे संजय?"
+        }
+      },
+      {
+        id: 2,
+        sanskrit: `सञ्जय उवाच ।\nदृष्ट्वा तु पाण्डवानीकं व्यूढं दुर्योधनस्तदा ।\nआचार्यमुपसङ्गम्य राजा वचनमब्रवीत् ॥2॥`,
+        translation: {
+          bn: "সঞ্জয় বললেন: হে রাজা, তখন দুর্যোধন, পাণ্ডবদের সেনাবিন্যাস দেখে, দ্রোণাচার্যের নিকট গিয়ে বলল —",
+          en: "Sanjaya said: O King, seeing the Pandava army arrayed in battle formation, King Duryodhana approached his teacher Drona and spoke the following words.",
+          hi: "संजय ने कहा: हे राजन्, उस समय राजा दुर्योधन ने पाण्डवों की सेना को व्यूह रचना में देखकर आचार्य द्रोण के पास जाकर यह वचन कहा।"
+        }
+      }
+    ];
+    function setLang(lang) {
+      currentLang = lang;
+      renderShlokas();
+    }
+    function renderShlokas() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const container = document.getElementById('shlokContainer');
+      container.innerHTML = '';
+      shlokas.forEach(shlok => {
+        if (
+          shlok.sanskrit.toLowerCase().includes(search) ||
+          shlok.translation.bn.toLowerCase().includes(search) ||
+          shlok.translation.en.toLowerCase().includes(search) ||
+          shlok.translation.hi.toLowerCase().includes(search)
+        ) {
+          const card = document.createElement('div');
+          card.className = 'shlok-card';
+          card.innerHTML = `
+            <div class="sanskrit">${shlok.sanskrit}</div>
+            <div class="translation">${shlok.translation[currentLang]}</div>
+          `;
+          container.appendChild(card);
+        }
+      });
+    }
+    function downloadPDF() {
+      const text = shlokas.map(s => `শ্লোকঃ ${s.id}\n${s.sanskrit}\n${s.translation[currentLang]}\n`).join('\n');
+      const blob = new Blob([text], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `BhagavadGita_${currentLang}.pdf`;
+      link.click();
+    }
+    renderShlokas();
+  </script>
+</body>
+</html>
